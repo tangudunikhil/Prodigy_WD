@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic Tac Toe</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<style type="text/css" media="all">
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.board {
+    display: grid;
+    grid-template-columns: repeat(3, 100px);
+    grid-gap: 5px;
+    margin-top: 20px;
+}
+
+#message {
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.square {
+    width: 100px;
+    height: 100px;
+    background-color: #eee;
+    border: 2px solid #aaa;
+    font-size: 3em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.square:hover {
+    background-color: #ddd;
+}
+
+
+.win {
+    background-color: #6fbf73; 
+}
+
+button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 1em;
+    background-color: #e74c3c; 
+    border: none;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    transition-duration: 0.4s;
+}
+
+button:hover {
+    background-color: #c0392b; 
+}
+
+button:active {
+    background-color: #922b21; 
+}
+
+
+    
+</style>
+<script type="text/javascript" charset="utf-8">
+    document.addEventListener("DOMContentLoaded", () => {
+    const board = document.getElementById("board");
+    const resetBtn = document.getElementById("resetBtn");
+    const messageDiv = document.getElementById("message");
+    let currentPlayer = "X";
+    let gameActive = true;
+    let gameState = ["", "", "", "", "", "", "", "", ""];
+
+    const handleSquareClick = (index) => {
+        if (gameState[index] !== "" || !gameActive) return;
+        gameState[index] = currentPlayer;
+        renderBoard();
+        if (checkWin()) {
+            gameActive = false;
+            highlightWinningSquares();
+            showMessage(`${currentPlayer} wins!`);
+        } else if (checkDraw()) {
+            gameActive = false;
+            showMessage("It's a draw!");
+        } else {
+            currentPlayer = currentPlayer === "X" ? "O" : "X";
+        }
+    };
+
+    const renderBoard = () => {
+        board.innerHTML = "";
+        gameState.forEach((value, index) => {
+            const square = document.createElement("div");
+            square.classList.add("square");
+            square.textContent = value;
+            square.addEventListener("click", () => handleSquareClick(index));
+            board.appendChild(square);
+        });
+    };
+
+    const checkWin = () => {
+        const winConditions = [
+            [0, 1, 2],
+            [3, 4, 5],
+            [6, 7, 8],
+            [0, 3, 6],
+            [1, 4, 7],
+            [2, 5, 8],
+            [0, 4, 8],
+            [2, 4, 6],
+        ];
+        return winConditions.some((condition) => {
+            const [a, b, c] = condition;
+            return (
+                gameState[a] !== "" &&
+                gameState[a] === gameState[b] &&
+                gameState[a] === gameState[c]
+            );
+        });
+    };
+
+    const checkDraw = () => {
+        return !gameState.includes("");
+    };
+
+    const highlightWinningSquares = () => {
+        const winConditions = [
+            [0, 1, 2],
+            [3, 4, 5],
+            [6, 7, 8],
+            [0, 3, 6],
+            [1, 4, 7],
+            [2, 5, 8],
+            [0, 4, 8],
+            [2, 4, 6],
+        ];
+        winConditions.forEach((condition) => {
+            const [a, b, c] = condition;
+            if (
+                gameState[a] !== "" &&
+                gameState[a] === gameState[b] &&
+                gameState[a] === gameState[c]
+            ) {
+                const winningSquares = [a, b, c];
+                winningSquares.forEach((index) => {
+                    const square = board.children[index];
+                    square.classList.add("win");
+                });
+            }
+        });
+    };
+
+    const showMessage = (message) => {
+        messageDiv.textContent = message;
+    };
+
+    const resetGame = () => {
+        currentPlayer = "X";
+        gameActive = true;
+        gameState = ["", "", "", "", "", "", "", "", ""];
+        renderBoard();
+        showMessage("");
+    };
+
+    resetBtn.addEventListener("click", resetGame);
+
+    renderBoard();
+});
+
+</script>
+<body>
+    <div class="container">
+        <h1>Tic Tac Toe</h1>
+        <div id="message"></div>
+        <div class="board" id="board"></div>
+        <button id="resetBtn">Reset Game</button>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
